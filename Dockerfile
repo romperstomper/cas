@@ -22,10 +22,13 @@ RUN rvm use 2.6.3
 RUN gem install --no-document pg -v '1.2.3'
 RUN gem install --no-document rails
 RUN chown -R postgres /usr/pgsql-9.3 && \
-    mkdir /tmp/pgdata \
-    chown -R postgres /tmp/pgdata 
+    mkdir /tmp/pgdata && \
+    chown -R postgres /tmp/pgdata && \
+    chown -R postgres /usr/local/rvm && \
+    chown -R postgres /tmp/.gem 
 WORKDIR /tmp
 USER postgres
 RUN pg_ctl initdb
 RUN echo "listen_address='*'" >> /tmp/pgdata/postgres.conf
+RUN rails new appname -d=postgresql
 CMD ["sleep", "infinity"]
