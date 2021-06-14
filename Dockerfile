@@ -27,8 +27,12 @@ RUN chown -R postgres /usr/pgsql-9.3 && \
     chown -R postgres /usr/local/rvm && \
     chown -R postgres /tmp/.gem 
 WORKDIR /tmp
+ADD start.sh /tmp/start.sh
+RUN chmod a+x /tmp/start.sh
 USER postgres
 RUN pg_ctl initdb
-RUN echo "listen_address='*'" >> /tmp/pgdata/postgres.conf
+RUN echo "listen_addresses='*'" >> /tmp/pgdata/postgresql.conf
 RUN rails new appname -d=postgresql
-CMD ["sleep", "infinity"]
+WORKDIR /tmp/appname
+RUN sed -i -e 's/unicode/SQL_ASCII/g' /tmp/appname/config/database.yml
+CMD ["/tmp/start.sh"]
